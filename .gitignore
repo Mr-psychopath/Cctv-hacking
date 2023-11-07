@@ -1,160 +1,77 @@
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*$py.class
 
-# C extensions
-*.so
+#!/usr/bin/env python3
+#-*- coding: utf-8 -*-
+#https://t.me/z1991krd
 
-# Distribution / packaging
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-share/python-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
+import requests, re , colorama ,random
+from requests.structures import CaseInsensitiveDict
+colorama.init()
 
-# PyInstaller
-#  Usually these files are written by a python script from a template
-#  before PyInstaller builds the exe, so as to inject date/other infos into it.
-*.manifest
-*.spec
+url = "http://www.insecam.org/en/jsoncountries/"
 
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
+headers = CaseInsensitiveDict()
+headers["Accept"] = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
+headers["Cache-Control"] = "max-age=0"
+headers["Connection"] = "keep-alive"
+headers["Host"] = "www.insecam.org"
+headers["Upgrade-Insecure-Requests"] = "1"
+headers["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36"
 
-# Unit test / coverage reports
-htmlcov/
-.tox/
-.nox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-*.py,cover
-.hypothesis/
-.pytest_cache/
-cover/
 
-# Translations
-*.mo
-*.pot
+resp = requests.get(url, headers=headers)
 
-# Django stuff:
-*.log
-local_settings.py
-db.sqlite3
-db.sqlite3-journal
+data = resp.json()
+countries = data['countries']
 
-# Flask stuff:
-instance/
-.webassets-cache
+print("""
+\033[1;31m d8888b. .d8888. db    db  .o88b. db   db  .d88b.  
+ 88  `8D 88'  YP `8b  d8' d8P  Y8 88   88 .8P  Y8. 
+ 88oodD' `8bo.    `8bd8'  8P      88ooo88 88    88 
+ 88~~~     `Y8b.    88    8b      88~~~88 88    88 
+ 88      db   8D    88    Y8b  d8 88   88 `8b  d8' 
+ 88      `8888Y'    YP     `Y88P' YP   YP  `Y88P'  
+                                                   
+                                                   
 
-# Scrapy stuff:
-.scrapy
+           db .d888b. .d888b.  db 
+          o88 88' `8D 88' `8D o88 
+           88 `V8o88' `V8o88'  88 
+ C8888D    88    d8'     d8'   88 
+           88   d8'     d8'    88 
+           VP  d8'     d8'     VP\033[1;31m\033[1;37m""")
 
-# Sphinx documentation
-docs/_build/
+for key, value in countries.items():
+    print(f'Code : ({key}) - {value["country"]} / ({value["count"]})  ')
+    print("")
 
-# PyBuilder
-.pybuilder/
-target/
 
-# Jupyter Notebook
-.ipynb_checkpoints
 
-# IPython
-profile_default/
-ipython_config.py
+try:
+   
 
-# pyenv
-#   For a library or package, you might want to ignore these files since the code is
-#   intended to run in multiple environments; otherwise, check them in:
-# .python-version
+    country = input("Code(##) : ")
+    res = requests.get(
+        f"http://www.insecam.org/en/bycountry/{country}", headers=headers
+    )
+    last_page = re.findall(r'pagenavigator\("\?page=", (\d+)', res.text)[0]
 
-# pipenv
-#   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
-#   However, in case of collaboration, if having platform-specific dependencies or dependencies
-#   having no cross-platform support, pipenv may install dependencies that don't work, or not
-#   install all needed dependencies.
-#Pipfile.lock
+    for page in range(int(last_page)):
+        res = requests.get(
+            f"http://www.insecam.org/en/bycountry/{country}/?page={page}",
+            headers=headers
+        )
+        find_ip = re.findall(r"http://\d+.\d+.\d+.\d+:\d+", res.text)
+    
+        with open(f'{country}.txt', 'w') as f:
+          for ip in find_ip:
+              print("")
+              print("\033[1;31m", ip)
+              f.write(f'{ip}\n')
+except:
+    pass
+finally:
+    print("\033[1;37m")
+    print('\033[37mSave File :'+country+'.txt')
 
-# poetry
-#   Similar to Pipfile.lock, it is generally recommended to include poetry.lock in version control.
-#   This is especially recommended for binary packages to ensure reproducibility, and is more
-#   commonly ignored for libraries.
-#   https://python-poetry.org/docs/basic-usage/#commit-your-poetrylock-file-to-version-control
-#poetry.lock
+    exit()
 
-# pdm
-#   Similar to Pipfile.lock, it is generally recommended to include pdm.lock in version control.
-#pdm.lock
-#   pdm stores project-wide configurations in .pdm.toml, but it is recommended to not include it
-#   in version control.
-#   https://pdm.fming.dev/#use-with-ide
-.pdm.toml
-
-# PEP 582; used by e.g. github.com/David-OConnor/pyflow and github.com/pdm-project/pdm
-__pypackages__/
-
-# Celery stuff
-celerybeat-schedule
-celerybeat.pid
-
-# SageMath parsed files
-*.sage.py
-
-# Environments
-.env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-
-# Spyder project settings
-.spyderproject
-.spyproject
-
-# Rope project settings
-.ropeproject
-
-# mkdocs documentation
-/site
-
-# mypy
-.mypy_cache/
-.dmypy.json
-dmypy.json
-
-# Pyre type checker
-.pyre/
-
-# pytype static type analyzer
-.pytype/
-
-# Cython debug symbols
-cython_debug/
-
-# PyCharm
-#  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
-#  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
-#  and can be added to the global gitignore or merged into this file.  For a more nuclear
-#  option (not recommended) you can uncomment the following to ignore the entire idea folder.
-#.idea/
